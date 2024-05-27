@@ -1,0 +1,83 @@
+{% load debate_tags static i18n cache %}
+{% get_current_language as LANGUAGE_CODE %}
+
+{% cache 600 footer tournament LANGUAGE_CODE %}
+<div class="row mt-3">
+
+  <div class="navbar navbar-light container-fluid small">
+
+    <div class="row mt-3 mb-2">
+      {% include "nav/logo_gobierno.html" with width=270 height=155 alt=logo_alt %}</a>
+      <div class="col-lg-4 col-md-12 mt-2">
+        
+        <h6 class="d-inline-block">
+          
+          {% if tournament and tabbycat_codename %}
+            {% blocktrans trimmed %}{{ tournament }} está en Tabbycat Versión {{ tabbycat_version }} (PLERD-MINERD) {% endblocktrans %}
+          {% else %}
+            {% blocktrans trimmed %} Tabbycat Versión {{ tabbycat_version }} (PLERD-MINERD) {% endblocktrans %}
+          {% endif %}
+        </h6>
+        <p class="text-muted">
+          Tabbycat es un proyecto de código abierto desarrollado por voluntarios y es gratuito para usar. Esta versión de Tabbycat está 
+          funcionando en la infraestructura del Ministerio de Educación de la República Dominicana. Fue adaptado por el equipo de desarrollo del PLERD 
+          a la arquitectura Django-MSSQLS.
+        </p>
+      </div>
+
+      <div class="col-lg-4 col-md-12 mt-2">
+        <h6 class="d-inline-block">{% blocktrans trimmed %}Sobre Tabbycat{% endblocktrans %}</h6>
+        <p class="text-muted">
+          {% blocktrans trimmed %}
+            El código fuente principal de Tabbycat es mantenido por <a href="https://tabbycat-debate.org/">Tabbycat Debate Association</a>, una organización sin fines de lucro dedicada a promover la tecnología de debate abierta.
+            Esta versión de Tabbycat fue adaptada para el Ministerio de Educación de la República Dominicana por el PLERD.
+          {% endblocktrans %}
+        </p>
+      </div>
+
+     <div class="w-100"></div>
+
+      <div class="col mt-2">
+        <ul class="nav justify-content-center">
+          <li class="nav-item p-2">
+            <i data-feather="globe"></i>
+            <a class="nav-link p-0 d-inline-block" href="#" data-toggle="modal" data-target="#setLanguageModal">
+              {% trans "Language" as local_language_label %}
+              Language {% if LANGUAGE_CODE != 'en' and local_language_label != "Language" %} / {{ local_language_label }}{% endif %}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal fade" id="setLanguageModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{% trans "Change Language" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+          <input name="next" type="hidden" value="{{ redirect_to }}">
+          <select name="language" class="custom-select">
+              {% get_available_languages as LANGUAGES %}
+              {% get_language_info_list for LANGUAGES as languages %}
+              {% for language in languages %}
+                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                  {{ language.name_local }} ({{ language.code }})
+                </option>
+              {% endfor %}
+          </select>
+          <input class="btn btn-primary btn-block mt-3" type="submit" value="{% trans "Use this language" %}">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endcache %}
