@@ -21,73 +21,72 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
     - name: Set up Python
       id: setup-python
       uses: actions/setup-python@v4
       with:
-        python-version-file: '.python-version'
+        python-version: '3.9'
+        
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version-file: '.nvmrc'
+        node-version: '18'
+
     - name: Cache node modules
       uses: actions/cache@v3
-      env:
-        cache-name: cache-node-modules
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-build-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
+          ${{ runner.os }}-build-node-
+
     - name: Cache pipenv modules
       uses: actions/cache@v3
       with:
         path: ~/.local/share/virtualenvs
-        key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-pipenv-${{ hashFiles('Pipfile.lock') }}
+        key: ${{ runner.os }}-python-${{ hashFiles('Pipfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-python-
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install pipenv
+        pip install pipenv
         pipenv install --system --dev --deploy
-        pip install pyodbc
-        pip install django-mssql-backend
-        python -c "import django; print(django.__version__)"
+        pip install pyodbc django-mssql-backend
         npm ci
-    # Comentamos el paso de linting para enfocarnos en la funcionalidad
-    # - name: Run linting
-    #   run: npm run lint
-    - name: Run build and collect
+
+    - name: Run build and collect static files
       run: |
         npm run build
         python ./tabbycat/manage.py collectstatic --noinput -v 0
+
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
-      id: deploy-to-webapp
       with:
         app-name: 'plerdtabby'
         slot-name: 'Production'
         publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_60E5B3E05D4949B4AFC0C534C5F32AD3 }}
   
-  build-docker-dev:
+  # build-docker-dev:
 
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Build Docker image (dev)
-        run: docker-compose -f docker-compose.yml build
+    # steps:
+      # - uses: actions/checkout@v3
+        # with:
+          # fetch-depth: 1
+      # - name: Build Docker image (dev)
+        # run: docker-compose -f docker-compose.yml build
 
-  build-docker-prod:
+  # build-docker-prod:
 
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Build Docker image (prod)
-        run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+    # steps:
+      # - uses: actions/checkout@v3
+        # with:
+          # fetch-depth: 1
+      # - name: Build Docker image (prod)
+        # run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
