@@ -67,7 +67,7 @@ jobs:
       with:
         app-name: 'plerdtabby'
         slot-name: 'Production'
-        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_60E5B3E05D4949B4AFC0C534C5F32AD3 }}
   
   # build-docker-dev:
 
