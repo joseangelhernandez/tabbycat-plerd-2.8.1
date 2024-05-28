@@ -51,9 +51,8 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pipenv
         pipenv install --system --dev --deploy
-        pipenv run
         pip install pyodbc
-        pip django-mssql-backend
+        pip install django-mssql-backend
         python -c "import django; print(django.__version__)"
         npm ci
     # Comentamos el paso de linting para enfocarnos en la funcionalidad
