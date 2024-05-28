@@ -28,8 +28,8 @@ RUN apt-get update && apt-get install -y \
 # Install our node/python requirements
 RUN pip install pipenv
 RUN pipenv install --system --deploy
-RUN pipenv install pyodbc
-RUN pipenv install django-mssql-backend
+RUN pip install pyodbc
+RUN pip install django-mssql-backend
 RUN npm ci --only=production
 
 # Compile all the static files
