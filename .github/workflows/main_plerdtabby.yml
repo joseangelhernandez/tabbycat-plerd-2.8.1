@@ -15,16 +15,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-        ports: ['5432:5432']
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     env:
       ## Environment variable
       GITHUB_CI: true # Just 'CI' clashes with Render
@@ -70,8 +60,16 @@ jobs:
       run: |
         npm run build
         python ./tabbycat/manage.py collectstatic --noinput -v 0
+    - name: Run migrations
+      run: python ./tabbycat/manage.py migrate
     - name: Run tests
       run: python tabbycat/manage.py test -v 2 --exclude-tag=selenium
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: <Your_App_Name>
+        slot-name: production
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
 
   build-docker-dev:
 
