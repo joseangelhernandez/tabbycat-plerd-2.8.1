@@ -53,7 +53,7 @@ jobs:
         pipenv install --system --dev --deploy
         pipenv uninstall django-mssql-backend
         pipenv install django-mssql-backend
-        python -m django –version
+        python -c "import django; print(django.get_version())"
         npm ci
     # Comentamos el paso de linting para enfocarnos en la funcionalidad
     # - name: Run linting
