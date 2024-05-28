@@ -69,7 +69,7 @@ jobs:
       with:
         name: myapp
         path: myapp.zip
-        
+
   build-docker-dev:
     runs-on: ubuntu-latest
 
@@ -103,6 +103,19 @@ jobs:
           name: myapp
           path: .
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Install dependencies with pipenv
+        run: |
+          pipenv install --system --dev --deploy
+          pip install pyodbc django-mssql-backend
+         
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
