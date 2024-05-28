@@ -39,8 +39,6 @@ whitenoise = "*"
 drf-spectacular = "*"
 daphne = "*"
 drf-link-header-pagination = "*"
-pyodbc = "*"
-django-pyodbc-azure = "*"
 networkx = "*" # Avoid its dependencies (SciPy)
 
 [dev-packages]
