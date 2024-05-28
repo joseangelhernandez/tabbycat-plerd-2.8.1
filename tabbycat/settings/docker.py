@@ -6,9 +6,11 @@ import os
 
 ALLOWED_HOSTS = ["*"]
 
+# SQL SERVER ENGINE
+
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
+        'ENGINE': 'sql_server.pyodbc',
         'NAME': 'tabbyplerd',
         'USER': 'joseangel',
         'PASSWORD': 'Mejoan199',
