@@ -12,9 +12,7 @@ on:
 
 jobs:
   build-ubuntu:
-
     runs-on: ubuntu-latest
-
     env:
       ## Environment variable
       GITHUB_CI: true
@@ -54,7 +52,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pipenv
         pipenv install --system --dev --deploy
-        pip install pyodbc django-mssql-backend
         npm ci
 
     - name: Run build and collect static files
@@ -65,33 +62,64 @@ jobs:
     - name: Zip the package
       run: |
         zip -r myapp.zip .
-
-    - name: 'Deploy to Azure Web App'
-      uses: azure/webapps-deploy@v2
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
       with:
-        app-name: 'plerdtabby'
-        slot-name: 'Production'
-        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_60E5B3E05D4949B4AFC0C534C5F32AD3 }}
-        package: ./myapp.zip
-  
-  # build-docker-dev:
+        name: myapp
+        path: myapp.zip
 
-    # runs-on: ubuntu-latest
+  build-docker-dev:
+    runs-on: ubuntu-latest
 
-    # steps:
-      # - uses: actions/checkout@v3
-        # with:
-          # fetch-depth: 1
-      # - name: Build Docker image (dev)
-        # run: docker-compose -f docker-compose.yml build
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Build Docker image (dev)
+        run: docker-compose -f docker-compose.yml build
 
-  # build-docker-prod:
+  build-docker-prod:
+    runs-on: ubuntu-latest
 
-    # runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Build Docker image (prod)
+        run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
 
-    # steps:
-      # - uses: actions/checkout@v3
-        # with:
-          # fetch-depth: 1
-      # - name: Build Docker image (prod)
-        # run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-ubuntu, build-docker-dev, build-docker-prod]
+
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: myapp
+          path: .
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Install dependencies with pipenv
+        run: |
+          pipenv install --system --dev --deploy
+         
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'plerdtabby'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_60E5B3E05D4949B4AFC0C534C5F32AD3 }}
+          package: ./myapp.zip
+        env:
+          AZURE_HTTP_USER_AGENT: 'GITHUBACTIONS_${{ github.workflow }}_${{ github.run_id }}'
