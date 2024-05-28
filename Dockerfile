@@ -26,8 +26,6 @@ RUN pipenv install pyodbc
 RUN pipenv install django-mssql-backend
 RUN npm ci --only=production
 
-# Copy the rest of the application code
-COPY . .
 
 # Compile all the static files
 RUN npm run build
