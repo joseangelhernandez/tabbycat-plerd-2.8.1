@@ -8,12 +8,17 @@ ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tabbycat',
-        'USER': 'tabbycat',
-        'PASSWORD': 'tabbycat',
-        'HOST': 'db',
-        'PORT': 5432, # Non-standard to prevent collisions,
+        'ENGINE': 'mssql',
+        'NAME': 'tabbyplerd',
+        'USER': 'joseangel',
+        'PASSWORD': 'Mejoan199',
+        'HOST': 'pruebasplerd.database.windows.net',
+        'PORT': '',
+
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+            'extra_params': 'TrustServerCertificate=yes;',
+        },
     }
 }
 
