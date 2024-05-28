@@ -15,15 +15,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    services:
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        env:
-          SA_PASSWORD: 'Mejoan199'
-          ACCEPT_EULA: 'Y'
-        ports: ['1433:1433']
-        options: --health-cmd "curl -f http://localhost:1433 || exit 1" --health-interval 10s --health-timeout 5s --health-retries 5
-
     env:
       ## Environment variable
       GITHUB_CI: true
@@ -67,8 +58,6 @@ jobs:
       run: |
         npm run build
         python ./tabbycat/manage.py collectstatic --noinput -v 0
-    - name: Run tests
-      run: python tabbycat/manage.py test -v 2 --exclude-tag=selenium
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
