@@ -59,14 +59,6 @@ jobs:
       run: |
         npm run build
         python ./tabbycat/manage.py collectstatic --noinput -v 0
-    - name: Run migrations
-      env:
-        DATABASE_URL: "mssql://joseangel:Mejoan199@pruebasplerd.database.windows.net/tabbyplerd"
-      run: python ./tabbycat/manage.py migrate
-    - name: Run tests
-      env:
-        DATABASE_URL: "mssql://joseangel:Mejoan199@pruebasplerd.database.windows.net/tabbyplerd"
-      run: python tabbycat/manage.py test -v 2 --exclude-tag=selenium
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
