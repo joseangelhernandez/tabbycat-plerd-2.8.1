@@ -40,6 +40,11 @@ drf-spectacular = "*"
 daphne = "*"
 drf-link-header-pagination = "*"
 networkx = "*" # Avoid its dependencies (SciPy)
+pyodbc = "*"
+django-mssql-backend = "*"
+cryptography = "*"
+setuptools = "*"
+wheel = "*"
 
 [dev-packages]
 pre-commit = "*"
