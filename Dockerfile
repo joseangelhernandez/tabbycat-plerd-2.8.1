@@ -7,7 +7,7 @@ ENV IN_DOCKER 1
 
 # Setup Node/NPM
 RUN apt-get update
-RUN apt-get install -y curl nginx
+RUN apt-get install -y curl nginx git  # Added git installation here
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 
@@ -32,7 +32,6 @@ RUN pipenv install pyodbc
 RUN pipenv install django-mssql-backend
 RUN npm ci --only=production
 
-
 # Compile all the static files
 RUN npm run build
 RUN python ./tabbycat/manage.py collectstatic --noinput -v 0
@@ -42,3 +41,4 @@ EXPOSE 8000
 
 # Run the application
 CMD ["gunicorn", "-b", "0.0.0.0:8000", "tabbycat.wsgi:application"]
+
