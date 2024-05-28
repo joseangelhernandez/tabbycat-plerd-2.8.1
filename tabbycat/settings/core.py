@@ -302,10 +302,10 @@ X_FRAME_OPTIONS = 'SAMEORIGIN' # Necessary to get Django-Summernote working beca
 # ==============================================================================
 # Database
 # ==============================================================================
-
+# DATABASE UPDATED
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
+        'ENGINE': 'sql_server.pyodbc',
     },
 }
 
