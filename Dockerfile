@@ -19,6 +19,12 @@ ADD . /tcd/
 # Set git to use HTTPS (SSH is often blocked by firewalls)
 RUN git config --global url."https://".insteadOf git://
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    unixodbc-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install our node/python requirements
 RUN pip install pipenv
 RUN pipenv install --system --deploy
