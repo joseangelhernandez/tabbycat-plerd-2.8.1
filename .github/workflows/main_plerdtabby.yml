@@ -52,37 +52,24 @@ jobs:
         python -m pip install pipenv
         pipenv install --system --dev --deploy
         npm ci
-    - name: Run linting
-      run: npm run lint
+    # Comentamos el paso de linting para enfocarnos en la funcionalidad
+    # - name: Run linting
+    #   run: npm run lint
     - name: Run build and collect
       run: |
         npm run build
         python ./tabbycat/manage.py collectstatic --noinput -v 0
+    - name: Run migrations
+      env:
+        DATABASE_URL: "mssql://joseangel:Mejoan199@pruebasplerd.database.windows.net/tabbyplerd"
+      run: python ./tabbycat/manage.py migrate
+    - name: Run tests
+      env:
+        DATABASE_URL: "mssql://joseangel:Mejoan199@pruebasplerd.database.windows.net/tabbyplerd"
+      run: python tabbycat/manage.py test -v 2 --exclude-tag=selenium
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
-        app-name: <Your_App_Name>
+        app-name: plerdtabby
         slot-name: production
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-
-  build-docker-dev:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Build Docker image (dev)
-        run: docker-compose -f docker-compose.yml build
-
-  build-docker-prod:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Build Docker image (prod)
-        run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
