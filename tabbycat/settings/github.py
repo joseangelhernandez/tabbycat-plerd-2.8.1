@@ -9,7 +9,7 @@
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
+        'ENGINE': 'sql_server.pyodbc',
         'NAME': 'tabbyplerd',
         'USER': 'joseangel',
         'PASSWORD': 'Mejoan199',
