@@ -12,9 +12,7 @@ on:
 
 jobs:
   build-ubuntu:
-
     runs-on: ubuntu-latest
-
     env:
       ## Environment variable
       GITHUB_CI: true
@@ -65,33 +63,40 @@ jobs:
     - name: Zip the package
       run: |
         zip -r myapp.zip .
+        
+  build-docker-dev:
+    runs-on: ubuntu-latest
 
-    - name: 'Deploy to Azure Web App'
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'plerdtabby'
-        slot-name: 'Production'
-        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_60E5B3E05D4949B4AFC0C534C5F32AD3 }}
-        package: ./myapp.zip
-  
-  # build-docker-dev:
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Build Docker image (dev)
+        run: docker-compose -f docker-compose.yml build
 
-    # runs-on: ubuntu-latest
+  build-docker-prod:
+    runs-on: ubuntu-latest
 
-    # steps:
-      # - uses: actions/checkout@v3
-        # with:
-          # fetch-depth: 1
-      # - name: Build Docker image (dev)
-        # run: docker-compose -f docker-compose.yml build
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Build Docker image (prod)
+        run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
 
-  # build-docker-prod:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-ubuntu, build-docker-dev, build-docker-prod]
 
-    # runs-on: ubuntu-latest
-
-    # steps:
-      # - uses: actions/checkout@v3
-        # with:
-          # fetch-depth: 1
-      # - name: Build Docker image (prod)
-        # run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'plerdtabby'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_60E5B3E05D4949B4AFC0C534C5F32AD3 }}
+          package: ./myapp.zip
+        env:
+          AZURE_HTTP_USER_AGENT: 'GITHUBACTIONS_${{ github.workflow }}_${{ github.run_id }}'
