@@ -23,6 +23,8 @@ DATABASES = {
     }
 }
 
+DATABASE_CONNECTION_POOLING = False
+
 # Replace this with your time zone, as defined in the IANA time zone database:
 # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 TIME_ZONE = 'Australia/Melbourne'
