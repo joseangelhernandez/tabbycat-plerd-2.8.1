@@ -64,6 +64,12 @@ jobs:
       run: |
         zip -r myapp.zip .
         
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: myapp
+        path: myapp.zip
+        
   build-docker-dev:
     runs-on: ubuntu-latest
 
@@ -91,6 +97,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
     
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: myapp
+          path: .
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
