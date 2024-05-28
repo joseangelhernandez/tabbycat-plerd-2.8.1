@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.9-slim
 
 # Just needed for all things python (note this is setting an env variable)
 ENV PYTHONUNBUFFERED 1
@@ -22,9 +22,12 @@ RUN git config --global url."https://".insteadOf git://
 # Install our node/python requirements
 RUN pip install pipenv
 RUN pipenv install --system --deploy
-RUN pip install pyodbc
-RUN pip install django-mssql-backend
+RUN pipenv install pyodbc
+RUN pipenv install django-mssql-backend
 RUN npm ci --only=production
+
+# Copy the rest of the application code
+COPY . .
 
 # Compile all the static files
 RUN npm run build
