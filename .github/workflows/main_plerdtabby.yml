@@ -51,6 +51,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install pipenv
         pipenv install --system --dev --deploy
+        pipenv install pyodbc
         pipenv install django-pyodbc-azure
         npm ci
     # Comentamos el paso de linting para enfocarnos en la funcionalidad
