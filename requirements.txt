@@ -77,7 +77,7 @@ twisted==22.10.0
 txaio==23.1.1
 typing-extensions==4.5.0
 uritemplate==4.1.1
-urllib3==1.26.14
+urllib3==1.26.19
 wcwidth==0.2.6
 webencodings==0.5.1
 whitenoise==6.4.0
@@ -126,7 +126,7 @@ sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
 sqlparse==0.4.3
 tornado==6.2
-urllib3==1.26.14
+urllib3==1.26.19
 virtualenv==20.20.0
 zipp==3.15.0
 mssql-django==1.5
