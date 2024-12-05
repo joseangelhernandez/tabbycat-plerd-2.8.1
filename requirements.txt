@@ -35,7 +35,7 @@ django-summernote==0.8.20.0
 djangorestframework==3.14.0
 drf-link-header-pagination==0.2.0
 drf-spectacular==0.25.1
-gunicorn==20.1.0
+gunicorn==22.0.0
 honcho==1.1.0
 html2text==2020.1.16
 hyperlink==21.0.0
